@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiShoppingList.Views.DetailPage"
+             Title="DetailPage">
+    <ScrollView>
+        <VerticalStackLayout>
+            <Label Text="Name" />
+            <Entry Text="{Binding SelectedItem.Name}" />
+            <Label Text="Notes" />
+            <Entry Text="{Binding SelectedItem.Notes}" />
+            <Label Text="Done" />
+            <Switch IsToggled="{Binding SelectedItem.Done}" />
+            <Button Text="Store" Command="{Binding SaveCommand}" CommandParameter="" Clicked="Save_Clicked" Margin="5"/>
+            <Button Text="Delete" Command="{Binding DeleteCommand}" Clicked="Delete_Clicked" Margin="5" />
+            <Button Text="Back" Clicked="Cancel_Clicked" Margin="5"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
