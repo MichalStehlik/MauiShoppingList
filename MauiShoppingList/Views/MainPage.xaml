@@ -33,7 +33,10 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <Button Text="Add" Grid.Row="1" Clicked="OnAddItem"/>
+        <FlexLayout Grid.Row="1" AlignContent="Stretch" AlignItems="Stretch">
+            <Button Text="Add" Clicked="OnAddItem" FlexLayout.Grow="1"/>
+            <Button Text="Reload" FlexLayout.Grow="1" />
+        </FlexLayout>
     </Grid>
     
 

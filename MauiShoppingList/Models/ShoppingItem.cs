@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -10,11 +12,12 @@ namespace MauiShoppingList.Models
 {
     public class ShoppingItem : INotifyPropertyChanged
     {
-        private int? _id;
+        private int _id;
         private string _name = "";
         private string _notes = "";
         private bool _done;
-        public int? Id 
+        [PrimaryKey, AutoIncrement]
+        public int Id 
         { 
             get 
             { 

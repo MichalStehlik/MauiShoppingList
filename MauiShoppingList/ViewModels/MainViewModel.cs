@@ -1,4 +1,5 @@
-﻿using MauiShoppingList.Models;
+﻿using MauiShoppingList.Data;
+using MauiShoppingList.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,31 +16,61 @@ namespace MauiShoppingList.ViewModels
     {
         private ObservableCollection<ShoppingItem> _items = new ObservableCollection<ShoppingItem>();
         private ShoppingItem? _selectedItem;
+        private ShoppingDatabase _database;
         private string _newName;
         public Command DeleteCommand { get; set; }
         public Command AddCommand { get; set; }
+        public Command UpdateCommand { get; set; }
+        public Command ReloadCommand { get; set; }
 
         public MainViewModel()
         {
-            Items.Add(new ShoppingItem { Id = 1, Name = "Milk", Notes = "2% milk" });
-            Items.Add(new ShoppingItem { Id = 2, Name = "Eggs", Notes = "1 dozen" });
-            Items.Add(new ShoppingItem { Id = 3, Name = "Bread", Notes = "Whole wheat" });
+            _database = new ShoppingDatabase();
+            Task.Run(() => LoadItems());
+            //Items.Add(new ShoppingItem { Id = 1, Name = "Milk", Notes = "2% milk" });
+            //Items.Add(new ShoppingItem { Id = 2, Name = "Eggs", Notes = "1 dozen" });
+            //Items.Add(new ShoppingItem { Id = 3, Name = "Bread", Notes = "Whole wheat" });
+
             DeleteCommand = new Command(
-                () =>
+                async () =>
                 {
-                    if (SelectedItem is ShoppingItem item)
+                    if (SelectedItem is ShoppingItem)
                     {
-                        Items.Remove(item);
+                        //Items.Remove(item);
+                        await DeleteItemAsync(SelectedItem);
+                        await LoadItems();
+
+                    }
+                },
+                () => SelectedItem is not null
+             );
+            UpdateCommand = new Command(
+                async () =>
+                {
+                    if (SelectedItem is ShoppingItem)
+                    {
+                        //Items.Remove(item);
+                        await StoreItemAsync(SelectedItem);
+                        await LoadItems();
+
                     }
                 },
                 () => SelectedItem is not null
              );
             AddCommand = new Command(
-                () =>
+                async () =>
                 {
-                        Items.Add(new ShoppingItem { Name = NewName});
+                    await StoreItemAsync(new ShoppingItem { Name = NewName });
+                    //Items.Add(new ShoppingItem { Name = NewName});
+                    await LoadItems();
                 },
-             () => NewName is not null
+                () => NewName is not null
+            );
+            ReloadCommand = new Command(
+                async () =>
+                {
+                    await LoadItems();
+                }
              );
         }
 
@@ -72,6 +103,26 @@ namespace MauiShoppingList.ViewModels
                 OnPropertyChanged();
                 AddCommand.ChangeCanExecute();
             }
+        }
+
+        private async Task LoadItems()
+        {
+            var items = await _database.GetItemsAsync();
+            Items.Clear();
+            foreach (var item in items)
+            {
+                Items.Add(item); 
+            }
+        }
+
+        public async Task<int> StoreItemAsync(ShoppingItem item)
+        {
+            return await _database.StoreItemAsync(item);
+        }
+
+        public Task<int> DeleteItemAsync(ShoppingItem item)
+        {
+            return _database.DeleteItemAsync(item);
         }
 
         #region MVVM

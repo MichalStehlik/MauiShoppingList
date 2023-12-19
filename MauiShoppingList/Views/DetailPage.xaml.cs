@@ -19,6 +19,8 @@ public partial class DetailPage : ContentPage
     }
     private void Save_Clicked(object sender, EventArgs e)
     {
+        var vm = BindingContext as ViewModels.MainViewModel;
+        vm!.UpdateCommand.Execute(null);
         Shell.Current.GoToAsync("..");
     }
 }
